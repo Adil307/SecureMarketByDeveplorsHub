@@ -1,0 +1,85 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<section class="checkout-layout">
+    <form asp-controller="Checkout" asp-action="PlaceOrder" method="post" class="checkout-form card">
+        <h1>Shipping details</h1>
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <div class="form-grid">
+           <label>
+    <span>Full name</span>
+    <input asp-for="FullName" autocomplete="name" />
+    <span asp-validation-for="FullName"></span>
+</label>
+            <label>
+                <span>Phone</span>
+                <input asp-for="Phone" autocomplete="tel" />
+                <span asp-validation-for="Phone"></span>
+            </label>
+            <label class="span-2">
+                <span>Address line 1</span>
+                <input asp-for="Line1" autocomplete="address-line1" />
+                <span asp-validation-for="Line1"></span>
+            </label>
+            <label class="span-2">
+                <span>Address line 2</span>
+                <input asp-for="Line2" autocomplete="address-line2" />
+                <span asp-validation-for="Line2"></span>
+            </label>
+            <label>
+                <span>City</span>
+                <input asp-for="City" autocomplete="address-level2" />
+                <span asp-validation-for="City"></span>
+            </label>
+            <label>
+                <span>State</span>
+                <input asp-for="State" autocomplete="address-level1" />
+                <span asp-validation-for="State"></span>
+            </label>
+            <label>
+                <span>Postal code</span>
+                <input asp-for="PostalCode" autocomplete="postal-code" />
+                <span asp-validation-for="PostalCode"></span>
+            </label>
+            <label>
+                <span>Country code</span>
+                <input asp-for="CountryCode" maxlength="2" autocomplete="country" />
+                <span asp-validation-for="CountryCode"></span>
+            </label>
+        </div>
+
+        <div class="payment-note">
+            <strong>Secure payment:</strong> card details are entered on Stripe Checkout, not on your server.
+        </div>
+
+        <button type="submit" class="btn btn-success btn-block">Continue to secure payment</button>
+    </form>
+
+    <aside class="order-review card">
+        <h2>Order summary</h2>
+        @foreach (var item in Model.Items)
+        {
+            <div class="review-item">
+                <img src="@item.Product?.ImageUrl" alt="@item.Product?.Name" />
+                <div>
+                    <strong>@item.Product?.Name</strong>
+                    <p>@item.Quantity × @((item.Product?.Price ?? 0).ToString("C"))</p>
+                </div>
+            </div>
+        }
+
+        <dl>
+            <dt>Subtotal</dt><dd>@Model.SubTotal.ToString("C")</dd>
+            <dt>Tax</dt><dd>@Model.Tax.ToString("C")</dd>
+            <dt>Shipping</dt><dd>@Model.Shipping.ToString("C")</dd>
+            <dt class="total">Total</dt><dd class="total">@Model.Total.ToString("C")</dd>
+        </dl>
+    </aside>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

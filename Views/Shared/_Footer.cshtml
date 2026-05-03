@@ -1,0 +1,102 @@
+<footer class="site-footer">
+    <section class="newsletter">
+        <h2>Subscribe on our newsletter</h2>
+        <p>Get daily news on upcoming offers from many suppliers all over the world.</p>
+        <form class="newsletter-form" method="get" action="/">
+            <input type="email" placeholder="Email" aria-label="Email" />
+            <button type="submit">Subscribe</button>
+        </form>
+    </section>
+
+  
+    <div class="container footer-grid">
+        <!-- Brand column -->
+        <div class="footer-brand-col">
+            <a class="footer-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/img/Logo.png" asp-append-version="true" alt="SecureMarket Logo" />
+            </a>
+
+            <p>
+                Best information about the company<br />
+                goes here but now lorem ipsum is
+            </p>
+
+            <div class="socials" aria-label="Social links">
+                <a href="#" aria-label="Facebook"><i class="fa fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+                <a href="#" aria-label="LinkedIn"><i class="fa fa-linkedin"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa fa-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fa fa-youtube-play"></i></a>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="footer-links-col">
+            <h3>About</h3>
+            <a href="#">About Us</a>
+            <a href="#">Find store</a>
+            <a href="#">Categories</a>
+            <a href="#">Blogs</a>
+        </div>
+
+        <!-- Partnership -->
+        <div class="footer-links-col">
+            <h3>Partnership</h3>
+            <a href="#">About Us</a>
+            <a href="#">Find store</a>
+            <a href="#">Categories</a>
+            <a href="#">Blogs</a>
+        </div>
+
+        <!-- Information -->
+        <div class="footer-links-col">
+            <h3>Information</h3>
+            <a href="#">Help Center</a>
+            <a href="#">Money Refund</a>
+            <a href="#">Shipping</a>
+            <a href="#">Contact us</a>
+        </div>
+
+        <!-- For users -->
+        <div class="footer-links-col">
+            <h3>For users</h3>
+            <a asp-controller="Auth" asp-action="Login">Login</a>
+            <a asp-controller="Auth" asp-action="Register">Register</a>
+            <a href="#">Settings</a>
+            <a asp-controller="Orders" asp-action="Index">My Orders</a>
+        </div>
+
+        <!-- Get app -->
+        <div class="footer-apps-col">
+            <h3>Get app</h3>
+
+            <a href="#" class="app-badge app-badge--apple">
+                <span class="app-badge__icon"><i class="fa fa-apple"></i></span>
+                <span class="app-badge__text">
+                    <small>Download on the</small>
+                    <strong>App Store</strong>
+                </span>
+            </a>
+
+            <a href="#" class="app-badge app-badge--google">
+                <span class="app-badge__icon"><i class="fa fa-play"></i></span>
+                <span class="app-badge__text">
+                    <small>GET IT ON</small>
+                    <strong>Google Play</strong>
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container footer-bottom__inner">
+            <span>© 2023 Ecommerce.</span>
+
+            <a href="#" class="footer-language">
+                <span class="footer-flag-us"></span>
+                <span>English</span>
+                <span class="footer-language__arrow">&#94;</span>
+            </a>
+        </div>
+    </div>
+</footer>

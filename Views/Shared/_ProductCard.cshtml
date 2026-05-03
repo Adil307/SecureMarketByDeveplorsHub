@@ -1,0 +1,27 @@
+@model Product
+@{
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<article class="product-card">
+    <a class="product-card__image" asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug">
+        <img src="@Model.ImageUrl" alt="@Model.Name" loading="lazy" />
+    </a>
+    <div class="product-card__body">
+        <div class="product-card__price">
+            <strong>@Model.Price.ToString("C")</strong>
+            @if (Model.OldPrice is not null)
+            {
+                <span>@Model.OldPrice.Value.ToString("C")</span>
+            }
+        </div>
+        <a class="product-card__title" asp-controller="Catalog" asp-action="Details" asp-route-slug="@Model.Slug">@Model.Name</a>
+        <div class="rating">★★★★★ <span>@Model.Rating.ToString("0.0") · @Model.SoldCount orders</span></div>
+        <p class="muted">@Model.Category?.Name</p>
+        <form asp-controller="Cart" asp-action="Add" method="post" class="card-cart-form">
+            <input type="hidden" name="productId" value="@Model.Id" />
+            <input type="hidden" name="quantity" value="1" />
+            <input type="hidden" name="returnUrl" value="@returnUrl" />
+            <button type="submit" class="icon-button" aria-label="Add @Model.Name to cart">＋</button>
+        </form>
+    </div>
+</article>

@@ -1,0 +1,155 @@
+@using SecureMarketMvc.Services
+@inject ICartService CartService
+
+@{
+    var headerCartCount = await CartService.GetCountAsync(Context.RequestAborted);
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<header class="market-header">
+    <div class="market-shell market-header__main">
+        <a class="market-brand" asp-controller="Home" asp-action="Index" aria-label="SecureMarket home">
+            <img src="~/img/Logo.png" asp-append-version="true" alt="SecureMarket Logo" />
+        </a>
+
+        <form class="market-search" method="get" asp-controller="Catalog" asp-action="Index">
+            <input name="q" type="search" placeholder="Search" aria-label="Search products" />
+
+            <select name="category" aria-label="Search category">
+                <option value="">All category</option>
+                <option value="consumer-electronics">Consumer electronics</option>
+                <option value="mobile-accessory">Mobile accessory</option>
+                <option value="home-outdoor">Home and outdoor</option>
+                <option value="clothes-wear">Clothes and wear</option>
+                <option value="machinery-tools">Machinery tools</option>
+                <option value="sports-outdoor">Sports and outdoor</option>
+                <option value="animal-pets">Animal and pets</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+
+       <nav class="market-actions" aria-label="Account navigation">
+    <a class="market-action" asp-controller="Auth" asp-action="Login">
+        <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M10 10C12.7625 10 15 7.7625 15 5C15 2.2375 12.7625 0 10 0C7.2375 0 5 2.2375 5 5C5 7.7625 7.2375 10 10 10ZM10 11.5C6.6625 11.5 0 13.175 0 16.5V17.75C0 18.4375 0.5625 19 1.25 19H18.75C19.4375 19 20 18.4375 20 17.75V16.5C20 13.175 13.3375 11.5 10 11.5Z" fill="#8B96A5" />
+        </svg>
+        <span>Profile</span>
+    </a>
+
+    <a class="market-action" href="#">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18 0H2C0.9 0 0.01 0.9 0.01 2L0 20L4 16H18C19.1 16 20 15.1 20 14V2C20 0.9 19.1 0 18 0ZM5 7H15C15.55 7 16 7.45 16 8C16 8.55 15.55 9 15 9H5C4.45 9 4 8.55 4 8C4 7.45 4.45 7 5 7ZM11 12H5C4.45 12 4 11.55 4 11C4 10.45 4.45 10 5 10H11C11.55 10 12 10.45 12 11C12 11.55 11.55 12 11 12ZM15 6H5C4.45 6 4 5.55 4 5C4 4.45 4.45 4 5 4H15C15.55 4 16 4.45 16 5C16 5.55 15.55 6 15 6Z" fill="#8B96A5" />
+        </svg>
+        <span>Message</span>
+    </a>
+
+    <a class="market-action" asp-controller="Orders" asp-action="Index">
+        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M11.3536 17.1307C10.5936 17.8207 9.42357 17.8207 8.66357 17.1207L8.55357 17.0207C3.30357 12.2707 -0.126429 9.16065 0.00357106 5.28065C0.0635711 3.58065 0.933571 1.95065 2.34357 0.990654C4.98357 -0.809346 8.24357 0.0306542 10.0036 2.09065C11.7636 0.0306542 15.0236 -0.819346 17.6636 0.990654C19.0736 1.95065 19.9436 3.58065 20.0036 5.28065C20.1436 9.16065 16.7036 12.2707 11.4536 17.0407L11.3536 17.1307Z" fill="#8B96A5" />
+        </svg>
+        <span>Orders</span>
+    </a>
+
+    <a class="market-action market-action--cart" asp-controller="Cart" asp-action="Index">
+        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.29989 16.7997C5.14491 16.7997 4.21043 17.7447 4.21043 18.8997C4.21043 20.0546 5.14491 20.9996 6.29989 20.9996C7.45487 20.9996 8.39985 20.0546 8.39985 18.8997C8.39985 17.7447 7.45487 16.7997 6.29989 16.7997ZM0 1.04998C0 1.62747 0.472492 2.09996 1.04998 2.09996H2.09996L5.8799 10.0693L4.46242 12.6313C3.69593 14.0383 4.70392 15.7497 6.29989 15.7497H17.8497C18.4272 15.7497 18.8997 15.2772 18.8997 14.6997C18.8997 14.1223 18.4272 13.6498 17.8497 13.6498H6.29989L7.45487 11.5498H15.2772C16.0647 11.5498 16.7577 11.1193 17.1147 10.4683L20.8736 3.65394C21.2621 2.96095 20.7581 2.09996 19.9601 2.09996H4.42042L3.71693 0.598489C3.54894 0.230996 3.17094 0 2.77195 0H1.04998C0.472492 0 0 0.472492 0 1.04998ZM16.7997 16.7997C15.6447 16.7997 14.7102 17.7447 14.7102 18.8997C14.7102 20.0546 15.6447 20.9996 16.7997 20.9996C17.9547 20.9996 18.8997 20.0546 18.8997 18.8997C18.8997 17.7447 17.9547 16.7997 16.7997 16.7997Z" fill="#8B96A5" />
+        </svg>
+        <span>My cart</span>
+
+        @if (headerCartCount > 0)
+        {
+            <em>@headerCartCount</em>
+        }
+    </a>
+</nav>
+    </div>
+
+    <div class="market-nav">
+        <div class="market-shell market-nav__inner">
+            <nav class="market-nav__left" aria-label="Primary navigation">
+                <details class="market-dropdown market-dropdown--categories">
+                    <summary class="market-dropdown__trigger market-nav__all">
+                        <span class="market-hamburger" aria-hidden="true"></span>
+                        <span>All category</span>
+                        <span class="market-chevron" aria-hidden="true"></span>
+                    </summary>
+
+                    <div class="market-dropdown__menu">
+                        <a asp-controller="Catalog" asp-action="Index">All products</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="consumer-electronics">Consumer electronics</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="mobile-accessory">Mobile accessory</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="home-outdoor">Home and outdoor</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="clothes-wear">Clothes and wear</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="machinery-tools">Machinery tools</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="sports-outdoor">Sports and outdoor</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="animal-pets">Animal and pets</a>
+                    </div>
+                </details>
+
+                <a asp-controller="Catalog" asp-action="Index" asp-route-sort="rating">Hot offers</a>
+                <a asp-controller="Catalog" asp-action="Index">Gift boxes</a>
+                <a asp-controller="Catalog" asp-action="Index">Projects</a>
+                <a asp-controller="Catalog" asp-action="Index">Menu item</a>
+
+                <details class="market-dropdown market-dropdown--help">
+                    <summary class="market-dropdown__trigger">
+                        <span>Help</span>
+                        <span class="market-chevron" aria-hidden="true"></span>
+                    </summary>
+
+                    <div class="market-dropdown__menu">
+                        <a href="#">Help Center</a>
+                        <a href="#">Contact supplier</a>
+                        <a href="#">Disputes &amp; reports</a>
+                        <a href="#">Buyer protection</a>
+                    </div>
+                </details>
+
+                @if (isAdmin)
+                {
+                    <a asp-controller="AdminProducts" asp-action="Index">Admin</a>
+                }
+            </nav>
+
+            <div class="market-nav__right">
+                <details class="market-dropdown market-dropdown--locale">
+                    <summary class="market-dropdown__trigger market-locale-trigger">
+                        <span>English, USD</span>
+                        <span class="market-chevron" aria-hidden="true"></span>
+                    </summary>
+
+                    <div class="market-dropdown__menu market-dropdown__menu--right">
+                        <a href="#">
+                            <span class="market-flag market-flag--us" aria-hidden="true"></span>
+                            English, USD
+                        </a>
+                        <a href="#">
+                            <span class="market-flag market-flag--de" aria-hidden="true"></span>
+                            Deutsch, EUR
+                        </a>
+                    </div>
+                </details>
+
+                <details class="market-dropdown market-dropdown--ship">
+                    <summary class="market-dropdown__trigger market-ship-trigger">
+                        <span>Ship to</span>
+                        <span class="market-flag market-flag--de" aria-hidden="true"></span>
+                        <span class="market-chevron" aria-hidden="true"></span>
+                    </summary>
+
+                    <div class="market-dropdown__menu market-dropdown__menu--right">
+                        <a href="#">
+                            <span class="market-flag market-flag--de" aria-hidden="true"></span>
+                            Germany
+                        </a>
+                        <a href="#">
+                            <span class="market-flag market-flag--us" aria-hidden="true"></span>
+                            United States
+                        </a>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+</header>

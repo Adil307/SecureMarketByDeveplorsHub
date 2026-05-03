@@ -1,0 +1,52 @@
+@model IReadOnlyList<Product>
+@{
+    ViewData["Title"] = "Admin products";
+}
+
+<section class="card content-card">
+    <div class="cart-title-row">
+        <h1>Admin products</h1>
+        <a class="btn btn-primary" asp-controller="AdminProducts" asp-action="Create">Create product</a>
+    </div>
+
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Featured</th>
+                    <th>Deal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="admin-product-cell">
+                            <img src="@product.ImageUrl" alt="" />
+                            <span>@product.Name</span>
+                        </div>
+                    </td>
+                    <td>@product.Category?.Name</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.StockQuantity</td>
+                    <td>@product.IsFeatured</td>
+                    <td>@product.IsDeal</td>
+                    <td class="table-actions">
+                        <a class="text-link" asp-controller="AdminProducts" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                        <form asp-controller="AdminProducts" asp-action="Delete" method="post" onsubmit="return confirm('Delete this product?');">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button class="link-button danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>

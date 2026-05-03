@@ -1,0 +1,41 @@
+@model SecureMarketMvc.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section class="auth-card card">
+    <h1>Sign in</h1>
+
+    <form asp-controller="Auth" asp-action="Login" method="post" autocomplete="on">
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <div asp-validation-summary="All" class="validation"></div>
+
+        <label asp-for="Email">
+            Email
+            <input asp-for="Email" type="email" autocomplete="username" />
+            <span asp-validation-for="Email"></span>
+        </label>
+
+        <label asp-for="Password">
+            Password
+            <input asp-for="Password" type="password" autocomplete="current-password" />
+            <span asp-validation-for="Password"></span>
+        </label>
+
+        <label class="checkbox-line">
+            <input asp-for="RememberMe" />
+            <span>Remember me</span>
+        </label>
+
+        <button class="btn btn-primary btn-block" type="submit">Login</button>
+
+        <p class="auth-switch">
+            New customer?
+            <a asp-controller="Auth" asp-action="Register">Register</a>
+        </p>
+    </form>
+</section>

@@ -1,0 +1,305 @@
+@model HomeIndexViewModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<section class="home-grid">
+    <aside class="category-menu card">
+        <a asp-controller="Catalog" asp-action="Index">Automobiles</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="clothes-wear">Clothes and wear</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="home-outdoor">Home interiors</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="consumer-electronics">Computer and tech</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="machinery-tools">Tools, equipments</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="sports-outdoor">Sports and outdoor</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="animal-pets">Animal and pets</a>
+        <a asp-controller="Catalog" asp-action="Index" asp-route-category="machinery-tools">Machinery tools</a>
+        <a asp-controller="Catalog" asp-action="Index">More category</a>
+    </aside>
+
+    <div class="hero-card">
+        <div class="hero-copy">
+            <p>Latest trending</p>
+            <h1>Electronic items</h1>
+            <a class="btn btn-light" asp-controller="Catalog" asp-action="Index" asp-route-category="consumer-electronics">Learn more</a>
+        </div>
+        <button class="mobile-menu-btn" type="button" aria-label="Open menu">
+    <span></span>
+</button>
+        <img src="~/img/banners/hero-electronics.png" asp-append-version="true" alt="Electronic items banner" />
+    </div>
+
+    <aside class="buyer-card card">
+        <div class="buyer-card__user">
+            <span class="avatar">U</span>
+            <p>Hi, user<br /><strong>let's get started</strong></p>
+        </div>
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a class="btn btn-primary btn-block" asp-controller="Orders" asp-action="Index">My orders</a>
+        }
+        else
+        {
+            <a class="btn btn-primary btn-block" asp-controller="Auth" asp-action="Register">Join now</a>
+            <a class="btn btn-outline btn-block" asp-controller="Auth" asp-action="Login">Log in</a>
+        }
+
+        <div class="promo orange">Get US $10 off with a new supplier</div>
+        <div class="promo teal">Send quotes with supplier preferences</div>
+    </aside>
+</section>
+
+<section class="card deals-row">
+    <div class="deals-row__title">
+        <h2>Deals and offers</h2>
+        <p>Hygiene equipments</p>
+
+        <div class="timer">
+            <span><strong>04</strong><small>Days</small></span>
+            <span><strong>13</strong><small>Hour</small></span>
+            <span><strong>34</strong><small>Min</small></span>
+            <span><strong>56</strong><small>Sec</small></span>
+        </div>
+    </div>
+
+    <a class="deal-item" asp-controller="Catalog" asp-action="Index">
+        <img src="~/img/products/smartwatch-silver.png" asp-append-version="true" alt="Smart watches" />
+        <strong>Smart watches</strong>
+        <span>-25%</span>
+    </a>
+
+    <a class="deal-item" asp-controller="Catalog" asp-action="Index">
+        <img src="~/img/products/laptop.png" asp-append-version="true" alt="Laptops" />
+        <strong>Laptops</strong>
+        <span>-15%</span>
+    </a>
+
+    <a class="deal-item" asp-controller="Catalog" asp-action="Index">
+        <img src="~/img/products/camera.png" asp-append-version="true" alt="GoPro cameras" />
+        <strong>GoPro cameras</strong>
+        <span>-40%</span>
+    </a>
+
+    <a class="deal-item" asp-controller="Catalog" asp-action="Index">
+        <img src="~/img/products/headphones-white.png" asp-append-version="true" alt="Headphones" />
+        <strong>Headphones</strong>
+        <span>-25%</span>
+    </a>
+
+    <a class="deal-item" asp-controller="Catalog" asp-action="Index">
+        <img src="~/img/products/camera.png" asp-append-version="true" alt="Canon cameras" />
+        <strong>Canon cameras</strong>
+        <span>-25%</span>
+    </a>
+</section>
+
+<section class="source-section">
+   <div class="source-banner home-outdoor">
+    <h2>Home and outdoor</h2>
+    <a class="btn btn-light"
+       asp-controller="Catalog"
+       asp-action="Index"
+       asp-route-category="home-outdoor">
+        Source now
+    </a>
+</div>
+
+    <div class="source-products">
+        @foreach (var product in Model.HomeOutdoor.Take(8))
+        {
+            <a class="source-product" asp-controller="Catalog" asp-action="Details" asp-route-slug="@product.Slug">
+                <span>@product.Name</span>
+                <small>From USD @product.Price.ToString("0")</small>
+                <img src="@product.ImageUrl" alt="@product.Name" />
+            </a>
+        }
+    </div>
+</section>
+
+<section class="source-section">
+  <div class="source-banner electronics">
+    <h2>Consumer electronics and gadgets</h2>
+    <a class="btn btn-light"
+       asp-controller="Catalog"
+       asp-action="Index"
+       asp-route-category="consumer-electronics">
+        Source now
+    </a>
+</div>
+
+    <div class="source-products">
+        @foreach (var product in Model.Electronics.Take(8))
+        {
+            <a class="source-product" asp-controller="Catalog" asp-action="Details" asp-route-slug="@product.Slug">
+                <span>@product.Name</span>
+                <small>From USD @product.Price.ToString("0")</small>
+                <img src="@product.ImageUrl" alt="@product.Name" />
+            </a>
+        }
+    </div>
+</section>
+
+<section class="request-banner">
+    <div>
+        <h2>An easy way to send requests to all suppliers</h2>
+        <p>Send one request and get quotes from verified suppliers.</p>
+    </div>
+
+    <form class="request-card" method="get" asp-controller="Catalog" asp-action="Index">
+        <h3>Send quote to suppliers</h3>
+        <input name="q" placeholder="What item you need?" />
+        <textarea name="details" placeholder="Type more details"></textarea>
+
+        <div class="form-row">
+            <input name="qty" type="number" placeholder="Qty" min="1" />
+            <select name="unit">
+                <option>Pcs</option>
+                <option>Box</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Send inquiry</button>
+    </form>
+</section>
+
+<section class="section-heading">
+    <h2>Recommended items</h2>
+</section>
+
+<section class="product-grid">
+    @foreach (var product in Model.Recommended)
+    {
+        <partial name="_ProductCard" model="product" />
+    }
+</section>
+
+<section class="section-heading extra-services-heading">
+    <h2>Our extra services</h2>
+</section>
+
+<section class="section-heading extra-services-heading">
+    <h2>Our extra services</h2>
+</section>
+
+<section class="service-grid">
+    <a class="service-card" href="#">
+        <div class="service-card__image">
+            <img src="~/img/services/warehouse.png" asp-append-version="true" alt="Warehouse service" />
+        </div>
+
+        <div class="service-card__body">
+            <strong>Source from<br />Industry Hubs</strong>
+        </div>
+
+        <span class="service-card__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M10.5 5C7.46 5 5 7.46 5 10.5C5 13.54 7.46 16 10.5 16C11.86 16 13.1 15.51 14.06 14.69L18.19 18.82L19.6 17.41L15.47 13.28C16.14 12.39 16.5 11.47 16.5 10.5C16.5 7.46 14.04 5 10.5 5ZM10.5 7C12.43 7 14 8.57 14 10.5C14 12.43 12.43 14 10.5 14C8.57 14 7 12.43 7 10.5C7 8.57 8.57 7 10.5 7Z" fill="#1C1C1C"/>
+            </svg>
+        </span>
+    </a>
+
+    <a class="service-card" href="#">
+        <div class="service-card__image">
+            <img src="~/img/services/color.png" asp-append-version="true" alt="Customize service" />
+        </div>
+
+        <div class="service-card__body">
+            <strong>Customize Your<br />Products</strong>
+        </div>
+
+        <span class="service-card__icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M18 0H2C1 0 0 0.9 0 2V5.01C0 5.73 0.43 6.35 1 6.7V18C1 19.1 2.1 20 3 20H17C17.9 20 19 19.1 19 18V6.7C19.57 6.35 20 5.73 20 5.01V2C20 0.9 19 0 18 0ZM17 18H3V7H17V18ZM18 5H2V2H18V5Z" fill="#1C1C1C"/>
+                <path d="M13 10H7V12H13V10Z" fill="#1C1C1C"/>
+            </svg>
+        </span>
+    </a>
+
+    <a class="service-card" href="#">
+        <div class="service-card__image">
+            <img src="~/img/services/plane.png" asp-append-version="true" alt="Shipping service" />
+        </div>
+
+        <div class="service-card__body">
+            <strong>Fast, reliable shipping<br />by ocean or air</strong>
+        </div>
+
+        <span class="service-card__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M3.51 6.03L11.02 9.25L3.5 8.25L3.51 6.03ZM11.01 14.75L3.5 17.97V15.75L11.01 14.75ZM1.51 3L1.5 10L16.5 12L1.5 14L1.51 21L22.5 12L1.51 3Z" fill="#1C1C1C"/>
+            </svg>
+        </span>
+    </a>
+
+    <a class="service-card" href="#">
+        <div class="service-card__image">
+            <img src="~/img/services/inspection.png" asp-append-version="true" alt="Inspection service" />
+        </div>
+
+        <div class="service-card__body">
+            <strong>Product monitoring<br />and inspection</strong>
+        </div>
+
+        <span class="service-card__icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1ZM12 11.99H19C18.47 16.11 15.72 19.78 12 20.93V12H5V6.3L12 3.19V11.99Z" fill="#1C1C1C"/>
+            </svg>
+        </span>
+    </a>
+</section>
+<section class="section-heading suppliers-heading">
+    <h2>Suppliers by region</h2>
+</section>
+
+<section class="regions">
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/uae.png" asp-append-version="true" alt="United Arab Emirates flag"></span>
+        <span><strong>Arabic Emirates</strong><small>shopname.ae</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/australia.png" asp-append-version="true" alt="Australia flag"></span>
+        <span><strong>Australia</strong><small>shopname.ae</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/US.png" asp-append-version="true" alt="United States flag"></span>
+        <span><strong>United States</strong><small>shopname.ae</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/russia.png" asp-append-version="true" alt="Russia flag"></span>
+        <span><strong>Russia</strong><small>shopname.ru</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/italy.png" asp-append-version="true" alt="Italy flag"></span>
+        <span><strong>Italy</strong><small>shopname.it</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/denmark.png" asp-append-version="true" alt="Denmark flag"></span>
+        <span><strong>Denmark</strong><small>denmark.com.dk</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/france.png" asp-append-version="true" alt="France flag"></span>
+        <span><strong>France</strong><small>shopname.com.fr</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/uae.png" asp-append-version="true" alt="United Arab Emirates flag"></span>
+        <span><strong>Arabic Emirates</strong><small>shopname.ae</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/china.png" asp-append-version="true" alt="China flag"></span>
+        <span><strong>China</strong><small>shopname.ae</small></span>
+    </a>
+
+    <a href="#" class="region-item">
+        <span class="flag"><img src="~/img/Partners/UK.png" asp-append-version="true" alt="Great Britain flag"></span>
+        <span><strong>Great Britain</strong><small>shopname.co.uk</small></span>
+    </a>
+</section>

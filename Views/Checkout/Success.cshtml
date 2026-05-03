@@ -1,0 +1,13 @@
+@model Order
+@{
+    ViewData["Title"] = "Order placed";
+}
+
+<section class="card content-card success-page">
+    <div class="success-icon">✓</div>
+    <h1>Order placed</h1>
+    <p>Your order <strong>@Model.OrderNumber</strong> has been created.</p>
+    <p>Payment status: <strong>@Model.PaymentStatus</strong>. If you are testing Stripe locally, run the webhook listener so the order changes from Pending to Paid.</p>
+    <a class="btn btn-primary" asp-controller="Orders" asp-action="Details" asp-route-orderNumber="@Model.OrderNumber">View order</a>
+    <a class="btn btn-outline" asp-controller="Catalog" asp-action="Index">Continue shopping</a>
+</section>

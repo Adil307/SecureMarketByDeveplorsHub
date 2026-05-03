@@ -1,0 +1,60 @@
+@model Order
+
+@{
+    ViewData["Title"] = "Order " + Model.OrderNumber;
+}
+
+<section class="order-detail-grid">
+    <div class="card content-card">
+        <h1>Order @Model.OrderNumber</h1>
+        <p class="muted">Placed @Model.OrderedAtUtc.ToLocalTime().ToString("f")</p>
+
+        @foreach (var item in Model.Items)
+        {
+            <article class="cart-item compact">
+                <img src="@item.ProductImageUrl" alt="@item.ProductName" />
+                <div class="cart-item__body">
+                    <h2>@item.ProductName</h2>
+                    <p>@item.Quantity × @item.UnitPrice.ToString("C")</p>
+                </div>
+            </article>
+        }
+    </div>
+
+    <aside class="card summary-card">
+        <h2>Summary</h2>
+
+        <dl>
+            <dt>Subtotal</dt>
+            <dd>@Model.SubTotal.ToString("C")</dd>
+
+            <dt>Tax</dt>
+            <dd>@Model.Tax.ToString("C")</dd>
+
+            <dt>Shipping</dt>
+            <dd>@Model.Shipping.ToString("C")</dd>
+
+            <dt class="total">Total</dt>
+            <dd class="total">@Model.Total.ToString("C")</dd>
+        </dl>
+
+        <p>Payment: <strong>@Model.PaymentStatus</strong></p>
+        <p>Status: <strong>@Model.OrderStatus</strong></p>
+
+        <h3>Ship to</h3>
+
+        <p>
+            @Model.ShippingAddress.FullName<br />
+            @Model.ShippingAddress.Line1<br />
+
+            @if (!string.IsNullOrWhiteSpace(Model.ShippingAddress.Line2))
+            {
+                @Model.ShippingAddress.Line2
+                @:<br />
+            }
+
+            @Model.ShippingAddress.City, @Model.ShippingAddress.State @Model.ShippingAddress.PostalCode<br />
+            @Model.ShippingAddress.CountryCode
+        </p>
+    </aside>
+</section>

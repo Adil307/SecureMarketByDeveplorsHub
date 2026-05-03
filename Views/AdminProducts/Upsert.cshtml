@@ -1,0 +1,101 @@
+@model AdminProductViewModel
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Create product" : "Edit product";
+}
+
+<section class="card content-card">
+    <h1>@ViewData["Title"]</h1>
+
+    <form asp-controller="AdminProducts" asp-action="Upsert" method="post" class="admin-form">
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+        <div class="form-grid">
+            <label class="span-2">
+                <span>Name</span>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name"></span>
+            </label>
+            <label>
+                <span>Slug</span>
+                <input asp-for="Slug" />
+                <span asp-validation-for="Slug"></span>
+            </label>
+            <label>
+                <span>Category</span>
+                <select asp-for="CategoryId">
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="CategoryId"></span>
+            </label>
+            <label>
+                <span>Price</span>
+                <input asp-for="Price" />
+                <span asp-validation-for="Price"></span>
+            </label>
+            <label>
+                <span>Old price</span>
+                <input asp-for="OldPrice" />
+                <span asp-validation-for="OldPrice"></span>
+            </label>
+            <label class="span-2">
+                <span>Image URL</span>
+                <input asp-for="ImageUrl" />
+                <span asp-validation-for="ImageUrl"></span>
+            </label>
+            <label>
+                <span>Brand</span>
+                <input asp-for="Brand" />
+                <span asp-validation-for="Brand"></span>
+            </label>
+            <label>
+                <span>Seller</span>
+                <input asp-for="Seller" />
+                <span asp-validation-for="Seller"></span>
+            </label>
+            <label>
+                <span>Condition</span>
+                <input asp-for="Condition" />
+                <span asp-validation-for="Condition"></span>
+            </label>
+            <label>
+                <span>Material</span>
+                <input asp-for="Material" />
+                <span asp-validation-for="Material"></span>
+            </label>
+            <label>
+                <span>Rating</span>
+                <input asp-for="Rating" />
+                <span asp-validation-for="Rating"></span>
+            </label>
+            <label>
+                <span>Stock quantity</span>
+                <input asp-for="StockQuantity" />
+                <span asp-validation-for="StockQuantity"></span>
+            </label>
+            <label class="span-2">
+                <span>Description</span>
+                <textarea asp-for="Description" rows="5"></textarea>
+                <span asp-validation-for="Description"></span>
+            </label>
+            <label class="checkbox-line">
+                <input asp-for="IsFeatured" /> <span>Featured</span>
+            </label>
+            <label class="checkbox-line">
+                <input asp-for="IsDeal" /> <span>Deal</span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" type="submit">Save product</button>
+            <a class="btn btn-outline" asp-controller="AdminProducts" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

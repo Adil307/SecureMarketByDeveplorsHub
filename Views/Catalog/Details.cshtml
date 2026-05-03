@@ -1,0 +1,198 @@
+@using System.Linq
+@model ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Product.Name;
+    var product = Model.Product;
+    var thumbs = new[] { product.ImageUrl }
+        .Concat(Model.RelatedProducts.Take(5).Select(x => x.ImageUrl))
+        .Take(6)
+        .ToList();
+
+    var related = Model.RelatedProducts.Take(6).ToList();
+    var youMayLike = Model.RelatedProducts.Take(5).ToList();
+}
+
+<section class="product-detail-page">
+    <nav class="catalog-breadcrumb" aria-label="Breadcrumb">
+        <a asp-controller="Home" asp-action="Index">Home</a>
+        <span>›</span>
+        <a asp-controller="Catalog" asp-action="Index">Clothings</a>
+        <span>›</span>
+        <a href="#">Men’s wear</a>
+        <span>›</span>
+        <span>Summer clothing</span>
+    </nav>
+
+    <section class="product-detail-card card">
+        <div class="detail-gallery">
+            <div class="detail-main-image">
+                <img src="@product.ImageUrl" alt="@product.Name" />
+            </div>
+
+            <div class="thumb-row">
+                @for (var i = 0; i < thumbs.Count; i++)
+                {
+                    <button class="thumb-item @(i == 0 ? "active" : "")" type="button">
+                        <img src="@thumbs[i]" alt="" />
+                    </button>
+                }
+            </div>
+        </div>
+
+        <div class="detail-info">
+            <p class="stock">✓ In stock</p>
+
+            <h1>@product.Name</h1>
+
+            <div class="detail-rating">
+                <span class="rating-stars">★★★★<i>★</i></span>
+                <strong>@product.Rating.ToString("0.0")</strong>
+                <span class="detail-muted">•</span>
+                <span class="detail-icon">▣</span>
+                <span>@product.ReviewCount reviews</span>
+                <span class="detail-muted">•</span>
+                <span class="detail-icon">♧</span>
+                <span>@product.SoldCount sold</span>
+            </div>
+
+            <div class="price-box">
+                <div>
+                    <strong>@product.Price.ToString("C")</strong>
+                    <span>50-100 pcs</span>
+                </div>
+                <div>
+                    <strong>@((product.Price * 0.92m).ToString("C"))</strong>
+                    <span>100-700 pcs</span>
+                </div>
+                <div>
+                    <strong>@((product.Price * 0.88m).ToString("C"))</strong>
+                    <span>700+ pcs</span>
+                </div>
+            </div>
+
+            <dl class="spec-list">
+                <dt>Price:</dt>
+                <dd>Negotiable</dd>
+
+                <dt>Type:</dt>
+                <dd>@(product.Category?.Name ?? "Classic shoes")</dd>
+
+                <dt>Material:</dt>
+                <dd>@product.Material</dd>
+
+                <dt>Design:</dt>
+                <dd>Modern nice</dd>
+
+                <dt>Customization:</dt>
+                <dd>Customized logo and design custom packages</dd>
+
+                <dt>Protection:</dt>
+                <dd>Refund Policy</dd>
+
+                <dt>Warranty:</dt>
+                <dd>2 years full warranty</dd>
+            </dl>
+        </div>
+
+        <aside class="seller-card">
+            <div class="seller-box">
+                <div class="seller-head">
+                    <span class="avatar green">R</span>
+                    <p>
+                        Supplier<br />
+                        <strong>@product.Seller</strong>
+                    </p>
+                </div>
+
+                <div class="seller-lines">
+                    <p><span class="flag-mini">🇩🇪</span> Germany, Berlin</p>
+                    <p><span class="seller-line-icon">◇</span> Verified Seller</p>
+                    <p><span class="seller-line-icon">◎</span> Worldwide shipping</p>
+                </div>
+
+                <form asp-controller="Cart" asp-action="Add" method="post" class="seller-actions">
+                    <input type="hidden" name="productId" value="@product.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button class="btn btn-primary btn-block" type="submit">Send inquiry</button>
+                </form>
+
+                <a class="btn btn-outline btn-block" href="#seller">Seller’s profile</a>
+            </div>
+
+            <button class="link-button save-button" type="button">♡ Save for later</button>
+        </aside>
+    </section>
+
+    <section class="detail-content-grid">
+        <section class="detail-tabs card" id="description">
+            <nav class="tabs">
+                <a href="#description" class="active">Description</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#shipping">Shipping</a>
+                <a href="#seller">About seller</a>
+            </nav>
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            </p>
+
+            <table class="spec-table">
+                <tr><th>Model</th><td>#8786867</td></tr>
+                <tr><th>Style</th><td>Classic style</td></tr>
+                <tr><th>Certificate</th><td>ISO-898921212</td></tr>
+                <tr><th>Size</th><td>34mm x 450mm x 19mm</td></tr>
+                <tr><th>Memory</th><td>36GB RAM</td></tr>
+            </table>
+
+            <ul class="feature-list">
+                <li>Some great feature name here</li>
+                <li>Lorem ipsum dolor sit amet, consectetur</li>
+                <li>Duis aute irure dolor in reprehenderit</li>
+                <li>Some great feature name here</li>
+            </ul>
+        </section>
+
+        <aside class="you-like-card card">
+            <h3>You may like</h3>
+
+            @foreach (var item in youMayLike)
+            {
+                <a class="you-like-item" asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.Slug">
+                    <img src="@item.ImageUrl" alt="@item.Name" />
+                    <span>
+                        <strong>@item.Name</strong>
+                        <small>$7.00 - $99.50</small>
+                    </span>
+                </a>
+            }
+        </aside>
+    </section>
+
+    <section class="related-products-card card">
+        <h2>Related products</h2>
+
+        <div class="related-product-row">
+            @foreach (var item in related)
+            {
+                <a class="related-product-item" asp-controller="Catalog" asp-action="Details" asp-route-slug="@item.Slug">
+                    <div>
+                        <img src="@item.ImageUrl" alt="@item.Name" />
+                    </div>
+                    <strong>@item.Name</strong>
+                    <small>$32.00-$40.00</small>
+                </a>
+            }
+        </div>
+    </section>
+
+    <section class="discount-banner">
+        <div>
+            <h2>Super discount on more than 100 USD</h2>
+            <p>Have you ever finally just write dummy info</p>
+        </div>
+        <a class="btn btn-warning" asp-controller="Catalog" asp-action="Index">Shop now</a>
+    </section>
+</section>

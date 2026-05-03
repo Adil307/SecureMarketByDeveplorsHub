@@ -1,0 +1,449 @@
+@using System
+@using System.Linq
+@model CatalogViewModel
+
+@{
+    ViewData["Title"] = "Catalog";
+    var currentCategory = Model.Categories.FirstOrDefault(x => x.Slug == Model.Category)?.Name ?? "Mobile accessory";
+
+    List<string> GetSelectedQueryValues(string key)
+    {
+        return Context.Request.Query[key]
+            .Select(x => x?.Trim())
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x!)
+            .ToList();
+    }
+
+    var selectedBrands = GetSelectedQueryValues("brand");
+    var selectedFeatures = GetSelectedQueryValues("feature");
+    var selectedRatings = GetSelectedQueryValues("rating");
+    var selectedCondition = Context.Request.Query["condition"].ToString();
+    var verified = Context.Request.Query["verified"].ToString() == "true";
+
+    var hasMin = !string.IsNullOrWhiteSpace(Model.Min?.ToString());
+    var hasMax = !string.IsNullOrWhiteSpace(Model.Max?.ToString());
+
+    var isFiltered =
+        selectedBrands.Any()
+        || selectedFeatures.Any()
+        || selectedRatings.Any()
+        || (!string.IsNullOrWhiteSpace(selectedCondition) && selectedCondition != "Any")
+        || hasMin
+        || hasMax
+        || verified;
+
+    var requestedView = Context.Request.Query["view"].ToString();
+    var viewMode = isFiltered || requestedView == "grid" ? "grid" : "list";
+
+    var products = viewMode == "grid"
+        ? Model.Products.Take(9).ToList()
+        : Model.Products.Take(6).ToList();
+
+    bool IsChecked(IEnumerable<string> values, string value)
+    {
+        return values.Any(x => string.Equals(x, value, StringComparison.OrdinalIgnoreCase));
+    }
+}
+
+<section class="catalog-page">
+    <div class="catalog-page__inner">
+
+        <nav class="catalog-breadcrumb" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a>
+            <span>›</span>
+            <a href="#">Clothings</a>
+            <span>›</span>
+            <a href="#">Men’s wear</a>
+            <span>›</span>
+            <span>Summer clothing</span>
+        </nav>
+
+        <section class="catalog-layout">
+            <aside class="catalog-filters">
+                <form asp-controller="Catalog" asp-action="Index" method="get" class="catalog-filter-form">
+                    <input type="hidden" name="category" value="@Model.Category" />
+                    <input type="hidden" name="q" value="@Model.Query" />
+                    <input type="hidden" name="sort" value="@Model.Sort" />
+                    <input type="hidden" name="view" value="grid" />
+
+                    <div class="filter-block">
+                        <h2>Category <span>⌃</span></h2>
+                        <a class="active" asp-controller="Catalog" asp-action="Index">Mobile accessory</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="electronics">Electronics</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="smartphones">Smartphones</a>
+                        <a asp-controller="Catalog" asp-action="Index" asp-route-category="modern-tech">Modern tech</a>
+                        <a class="see-all" href="#">See all</a>
+                    </div>
+
+                    <div class="filter-block">
+                        <h2>Brands <span>⌃</span></h2>
+                        <label>
+                            <input type="checkbox" name="brand" value="Samsung" checked="@IsChecked(selectedBrands, "Samsung")" onchange="this.form.submit()" />
+                            Samsung
+                        </label>
+                        <label>
+                            <input type="checkbox" name="brand" value="Apple" checked="@IsChecked(selectedBrands, "Apple")" onchange="this.form.submit()" />
+                            Apple
+                        </label>
+                        <label>
+                            <input type="checkbox" name="brand" value="Huawei" checked="@IsChecked(selectedBrands, "Huawei")" onchange="this.form.submit()" />
+                            Huawei
+                        </label>
+                        <label>
+                            <input type="checkbox" name="brand" value="Poco" checked="@IsChecked(selectedBrands, "Poco")" onchange="this.form.submit()" />
+                            Pocoo
+                        </label>
+                        <label>
+                            <input type="checkbox" name="brand" value="Lenovo" checked="@IsChecked(selectedBrands, "Lenovo")" onchange="this.form.submit()" />
+                            Lenovo
+                        </label>
+                        <a class="see-all" href="#">See all</a>
+                    </div>
+
+                    <div class="filter-block">
+                        <h2>Features <span>⌃</span></h2>
+                        <label>
+                            <input type="checkbox" name="feature" value="Metallic" checked="@IsChecked(selectedFeatures, "Metallic")" onchange="this.form.submit()" />
+                            Metallic
+                        </label>
+                        <label>
+                            <input type="checkbox" name="feature" value="Plastic cover" checked="@IsChecked(selectedFeatures, "Plastic cover")" onchange="this.form.submit()" />
+                            Plastic cover
+                        </label>
+                        <label>
+                            <input type="checkbox" name="feature" value="8GB Ram" checked="@IsChecked(selectedFeatures, "8GB Ram")" onchange="this.form.submit()" />
+                            8GB Ram
+                        </label>
+                        <label>
+                            <input type="checkbox" name="feature" value="Super power" checked="@IsChecked(selectedFeatures, "Super power")" onchange="this.form.submit()" />
+                            Super power
+                        </label>
+                        <label>
+                            <input type="checkbox" name="feature" value="Large Memory" checked="@IsChecked(selectedFeatures, "Large Memory")" onchange="this.form.submit()" />
+                            Large Memory
+                        </label>
+                        <a class="see-all" href="#">See all</a>
+                    </div>
+
+                    @if (!isFiltered)
+                    {
+                        <div class="filter-block">
+                            <h2>Price range <span>⌃</span></h2>
+
+                            <div class="price-slider">
+                                <span></span>
+                            </div>
+
+                            <div class="price-labels">
+                                <span>Min</span>
+                                <span>Max</span>
+                            </div>
+
+                            <div class="form-row">
+                                <input name="min" value="@Model.Min" placeholder="0" />
+                                <input name="max" value="@Model.Max" placeholder="999999" />
+                            </div>
+
+                            <button class="filter-apply-btn" type="submit">Apply</button>
+                        </div>
+
+                        <div class="filter-block">
+                            <h2>Condition <span>⌃</span></h2>
+                            <label>
+                                <input type="radio" name="condition" value="Any" checked="@(selectedCondition == "Any" || string.IsNullOrWhiteSpace(selectedCondition))" onchange="this.form.submit()" />
+                                Any
+                            </label>
+                            <label>
+                                <input type="radio" name="condition" value="Refurbished" checked="@(selectedCondition == "Refurbished")" onchange="this.form.submit()" />
+                                Refurbished
+                            </label>
+                            <label>
+                                <input type="radio" name="condition" value="Brand new" checked="@(selectedCondition == "Brand new")" onchange="this.form.submit()" />
+                                Brand new
+                            </label>
+                            <label>
+                                <input type="radio" name="condition" value="Old items" checked="@(selectedCondition == "Old items")" onchange="this.form.submit()" />
+                                Old items
+                            </label>
+                        </div>
+
+                        <div class="filter-block">
+                            <h2>Ratings <span>⌃</span></h2>
+                            <label>
+                                <input type="checkbox" name="rating" value="5 star" checked="@IsChecked(selectedRatings, "5 star")" onchange="this.form.submit()" />
+                                <span class="stars">★★★★★</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="rating" value="4 star" checked="@IsChecked(selectedRatings, "4 star")" onchange="this.form.submit()" />
+                                <span class="stars">★★★★☆</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="rating" value="3 star" checked="@IsChecked(selectedRatings, "3 star")" onchange="this.form.submit()" />
+                                <span class="stars">★★★☆☆</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="rating" value="2 star" checked="@IsChecked(selectedRatings, "2 star")" onchange="this.form.submit()" />
+                                <span class="stars">★★☆☆☆</span>
+                            </label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="filter-block filter-block--collapsed">
+                            <h2>Price range <span>⌄</span></h2>
+                        </div>
+
+                        <div class="filter-block filter-block--collapsed">
+                            <h2>Condition <span>⌄</span></h2>
+                        </div>
+
+                        <div class="filter-block filter-block--collapsed">
+                            <h2>Ratings <span>⌄</span></h2>
+                        </div>
+
+                        <div class="filter-block filter-block--collapsed">
+                            <h2>Manufacturer <span>⌄</span></h2>
+                        </div>
+                    }
+                </form>
+            </aside>
+
+            <section class="catalog-main">
+                <div class="catalog-toolbar">
+                    <div class="catalog-count">
+                        12,911 items in <strong>@currentCategory</strong>
+                    </div>
+
+                    <form asp-controller="Catalog" asp-action="Index" method="get" class="toolbar-actions">
+                        <input type="hidden" name="category" value="@Model.Category" />
+                        <input type="hidden" name="q" value="@Model.Query" />
+                        <input type="hidden" name="view" value="@viewMode" />
+
+                        @foreach (var brand in selectedBrands)
+                        {
+                            <input type="hidden" name="brand" value="@brand" />
+                        }
+
+                        @foreach (var feature in selectedFeatures)
+                        {
+                            <input type="hidden" name="feature" value="@feature" />
+                        }
+
+                        @foreach (var rating in selectedRatings)
+                        {
+                            <input type="hidden" name="rating" value="@rating" />
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(selectedCondition))
+                        {
+                            <input type="hidden" name="condition" value="@selectedCondition" />
+                        }
+
+                        @if (hasMin)
+                        {
+                            <input type="hidden" name="min" value="@Model.Min" />
+                        }
+
+                        @if (hasMax)
+                        {
+                            <input type="hidden" name="max" value="@Model.Max" />
+                        }
+
+                        <label class="verified-check">
+                            <input type="checkbox" name="verified" value="true" checked="@verified" onchange="this.form.submit()" />
+                            Verified only
+                        </label>
+
+                        <select name="sort" onchange="this.form.submit()">
+                            <option value="featured" selected="@(string.IsNullOrWhiteSpace(Model.Sort) || Model.Sort == "featured" ? "selected" : null)">Featured</option>
+                            <option value="newest" selected="@(Model.Sort == "newest" ? "selected" : null)">Newest</option>
+                            <option value="price-low" selected="@(Model.Sort == "price-low" ? "selected" : null)">Price low to high</option>
+                            <option value="price-high" selected="@(Model.Sort == "price-high" ? "selected" : null)">Price high to low</option>
+                            <option value="rating" selected="@(Model.Sort == "rating" ? "selected" : null)">Top rating</option>
+                        </select>
+
+                        <a class="view-button @(viewMode == "grid" ? "active" : "")"
+                           asp-controller="Catalog"
+                           asp-action="Index"
+                           asp-route-category="@Model.Category"
+                           asp-route-view="grid">
+                            ▦
+                        </a>
+
+                        <a class="view-button @(viewMode == "list" ? "active" : "")"
+                           asp-controller="Catalog"
+                           asp-action="Index"
+                           asp-route-category="@Model.Category"
+                           asp-route-view="list">
+                            ☰
+                        </a>
+                    </form>
+                </div>
+
+                @if (isFiltered)
+                {
+                    <div class="active-filters">
+                        @foreach (var brand in selectedBrands)
+                        {
+                            <span>@brand <b>×</b></span>
+                        }
+
+                        @foreach (var feature in selectedFeatures)
+                        {
+                            <span>@feature <b>×</b></span>
+                        }
+
+                        @foreach (var rating in selectedRatings)
+                        {
+                            <span>@rating <b>×</b></span>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(selectedCondition) && selectedCondition != "Any")
+                        {
+                            <span>@selectedCondition <b>×</b></span>
+                        }
+
+                        @if (verified)
+                        {
+                            <span>Verified <b>×</b></span>
+                        }
+
+                        @if (hasMin)
+                        {
+                            <span>Min @Model.Min <b>×</b></span>
+                        }
+
+                        @if (hasMax)
+                        {
+                            <span>Max @Model.Max <b>×</b></span>
+                        }
+
+                        <a asp-controller="Catalog"
+                           asp-action="Index"
+                           asp-route-category="@Model.Category"
+                           asp-route-q="@Model.Query"
+                           asp-route-sort="@Model.Sort"
+                           asp-route-view="list">
+                            Clear all filter
+                        </a>
+                    </div>
+                }
+
+                @if (viewMode == "grid")
+                {
+                    <div class="catalog-grid">
+                        @foreach (var product in products)
+                        {
+                            <article class="product-card catalog-product-card">
+                                <a class="product-card__image"
+                                   asp-controller="Catalog"
+                                   asp-action="Details"
+                                   asp-route-slug="@product.Slug">
+                                    <img src="@product.ImageUrl" alt="@product.Name" loading="lazy" />
+                                </a>
+
+                                <div class="product-card__body">
+                                    <div class="product-card__price">
+                                        <strong>@product.Price.ToString("C")</strong>
+                                        @if (product.OldPrice is not null)
+                                        {
+                                            <span>@product.OldPrice.Value.ToString("C")</span>
+                                        }
+                                    </div>
+
+                                    <form class="card-cart-form" asp-controller="Cart" asp-action="Add" method="post">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <input type="hidden" name="quantity" value="1" />
+                                        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                        <button type="submit" class="icon-button" aria-label="Add to wishlist">♡</button>
+                                    </form>
+
+                                    <div class="rating">
+                                        <span class="rating-stars">★★★★<i>★</i></span>
+                                        <span class="rating-number">@product.Rating.ToString("0.0")</span>
+                                    </div>
+
+                                    <a class="product-card__title"
+                                       asp-controller="Catalog"
+                                       asp-action="Details"
+                                       asp-route-slug="@product.Slug">
+                                        @product.Name
+                                    </a>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="product-list">
+                        @foreach (var product in products)
+                        {
+                            <article class="list-item catalog-list-card">
+                                <a class="list-item__image"
+                                   asp-controller="Catalog"
+                                   asp-action="Details"
+                                   asp-route-slug="@product.Slug">
+                                    <img src="@product.ImageUrl" alt="@product.Name" loading="lazy" />
+                                </a>
+
+                                <div class="list-item__body">
+                                    <a class="list-item__title"
+                                       asp-controller="Catalog"
+                                       asp-action="Details"
+                                       asp-route-slug="@product.Slug">
+                                        @product.Name
+                                    </a>
+
+                                    <div class="product-card__price">
+                                        <strong>@product.Price.ToString("C")</strong>
+                                        @if (product.OldPrice is not null)
+                                        {
+                                            <span>@product.OldPrice.Value.ToString("C")</span>
+                                        }
+                                    </div>
+
+                                    <div class="rating">
+                                        <span class="rating-stars">★★★★<i>★</i></span>
+                                        <span class="rating-number">@product.Rating.ToString("0.0")</span>
+                                        <span> · @product.SoldCount orders · </span>
+                                        <b>Free Shipping</b>
+                                    </div>
+
+                                    <p>@product.Description</p>
+
+                                    <a asp-controller="Catalog"
+                                       asp-action="Details"
+                                       asp-route-slug="@product.Slug"
+                                       class="text-link">
+                                        View details
+                                    </a>
+                                </div>
+
+                                <form asp-controller="Cart" asp-action="Add" method="post">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <input type="hidden" name="quantity" value="1" />
+                                    <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                                    <button type="submit" class="icon-button" aria-label="Add to wishlist">♡</button>
+                                </form>
+                            </article>
+                        }
+                    </div>
+                }
+
+                <div class="catalog-pagination">
+                    <select aria-label="Items per page">
+                        <option>Show 10</option>
+                    </select>
+
+                    <a href="#" aria-label="Previous page">‹</a>
+                    <a class="active" href="#">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#" aria-label="Next page">›</a>
+                </div>
+            </section>
+        </section>
+    </div>
+</section>
